@@ -38,14 +38,14 @@ namespace DesktopChess
             }
         }
 
-        public IEnumerator<Figure> WhiteEnumerator()
+        public IEnumerable<Figure> WhiteFigures()
         {
-            return allFigures.Where(figure => figure.FigureSide == FigureSide.White).GetEnumerator();
+            return allFigures.Where(figure => figure.FigureSide == FigureSide.White);
         }
 
-        public IEnumerator<Figure> BlackEnumerator()
+        public IEnumerable<Figure> BlackFigures()
         {
-            return allFigures.Where(figure => figure.FigureSide == FigureSide.Black).GetEnumerator();
+            return allFigures.Where(figure => figure.FigureSide == FigureSide.Black);
         }
     }
 }

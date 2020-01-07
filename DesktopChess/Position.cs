@@ -10,12 +10,12 @@ namespace DesktopChess
     {
         private string pos;
 
-        Position(int x, int y)
+        public Position(int x, int y)
         {
             FromIntToText(x, y, out pos);
         }
 
-        Position(string pos)
+        public Position(string pos)
         {
             this.pos = pos;
         }
@@ -26,7 +26,7 @@ namespace DesktopChess
         /// <returns></returns>
         public string GetPos() => pos;
 
-        static void FromTextToInt(string pos, out int x, out int y)
+        public static void FromTextToInt(string pos, out int x, out int y)
         {
             if(pos.Length != 2)
                 throw new ArgumentException();
@@ -37,11 +37,18 @@ namespace DesktopChess
             y = Convert.ToInt32(pos[1]) - 1;
         }
 
-        static void FromIntToText(int x, int y, out string pos)
+        public static void FromIntToText(int x, int y, out string pos)
         {
             if(x < 0 || x > 7 || y < 0 || y > 7)
                 throw new ArgumentException();
             pos = "abcdefgh"[x] + (y + 1).ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (!(obj is Position pos2)) return false;
+            return pos2.pos == pos;
         }
     }
 }
