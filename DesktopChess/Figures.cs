@@ -9,7 +9,7 @@ namespace DesktopChess
     {
         public Position FigPosition;
 
-        public abstract List<FigMove> GetPossibleTurns(Desk desk);
+        public abstract List<FigMove> GetPossibleMoves(Desk desk);
 
         public FigureSide FigureSide { get; protected set; }
 
@@ -18,7 +18,7 @@ namespace DesktopChess
         public bool IsAtacked(Desk desk)
         {
             var opFigs = this.FigureSide == FigureSide.Black ? desk.WhiteFigures() : desk.BlackFigures();
-            return opFigs.Any(fig => fig.GetPossibleTurns(desk).Any(move => move.AfterPosition.Equals(FigPosition) && move.CanEat));
+            return opFigs.Any(fig => fig.GetPossibleMoves(desk).Any(move => move.AfterPosition.Equals(FigPosition) && move.CanEat));
         }
 
         /// <summary>
@@ -44,6 +44,23 @@ namespace DesktopChess
             return FigureSide == FigureSide.Black ? deskCopy.BlackKing.IsAtacked(deskCopy) : deskCopy.WhiteKing.IsAtacked(deskCopy);
         }
 
+        /// <summary>
+        /// Try to add atacking move in list of moves
+        /// </summary>
+        /// <param name="desk"></param>
+        /// <param name="list"></param>
+        /// <param name="xDelta"></param>
+        /// <param name="yDelta"></param>
+        /// <returns>True if added succesfully</returns>
+        protected bool TryToAddMove(Desk desk, List<FigMove> list, int xDelta, int yDelta)
+        {
+            Position.FromTextToInt(FigPosition.GetPos(), out var x, out var y);
+            if (!CanAtackTo(desk, xDelta, yDelta) || IsMoveOpensKing(desk, xDelta, yDelta)) return false;
+            list.Add(new FigMove(this, FigPosition, new Position(x + xDelta, y + yDelta), true));
+            return true;
+
+        }
+
     }
 
     [Serializable]
@@ -56,7 +73,7 @@ namespace DesktopChess
             FigureType = FigureType.Pawn;
         }
 
-        public override List<FigMove> GetPossibleTurns(Desk desk)
+        public override List<FigMove> GetPossibleMoves(Desk desk)
         {
             var list = new List<FigMove>();
             Position.FromTextToInt(this.FigPosition.GetPos(), out var x, out var y);
@@ -70,11 +87,8 @@ namespace DesktopChess
                         if(y > 0 && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -1))
                             list.Add(new FigMove(this, FigPosition, new Position(x, y - 1), false));
 
-                        if(CanAtackTo(desk, -1, -1) && !IsMoveOpensKing(desk, -1, -1))
-                            list.Add(new FigMove(this, FigPosition, new Position(x-1,y-1), true));
-
-                        if(CanAtackTo(desk,1, -1) && !IsMoveOpensKing(desk, 1, -1))
-                            list.Add(new FigMove(this, FigPosition, new Position(x+1,y-1), true));
+                        TryToAddMove(desk, list, -1, -1);
+                        TryToAddMove(desk, list, 1, -1);
                 }
                     break;
                 case FigureSide.White:
@@ -85,11 +99,8 @@ namespace DesktopChess
                         if(y < 7 && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 1))
                             list.Add(new FigMove(this, FigPosition, new Position(x, y + 1), false));
 
-                        if(CanAtackTo(desk, -1, 1) && !IsMoveOpensKing(desk, -1, 1))
-                            list.Add(new FigMove(this, FigPosition, new Position(x-1,y+1), true));
-
-                        if(CanAtackTo(desk, 1, 1) && !IsMoveOpensKing(desk, 1, 1))
-                            list.Add(new FigMove(this, FigPosition, new Position(x+1,y+1), true));
+                        TryToAddMove(desk, list, 1, -1);
+                        TryToAddMove(desk, list, 1, 1);
                 }
                     break;
             }
@@ -110,38 +121,169 @@ namespace DesktopChess
             FigureType = FigureType.Horse;
         }
 
-        public override List<FigMove> GetPossibleTurns(Desk desk)
+        public override List<FigMove> GetPossibleMoves(Desk desk)
         {
             var list = new List<FigMove>();
-            Position.FromTextToInt(FigPosition.GetPos(), out var x, out var y);
 
-            if(CanAtackTo(desk, 1, 2) && !IsMoveOpensKing(desk, 1, 2))
-                list.Add(new FigMove(this, this.FigPosition, new Position(x + 1, y + 2), true));
-
-            if(CanAtackTo(desk, 2, 1))
-                list.Add(new FigMove(this, this.FigPosition, new Position(x + 2, y + 1), true));
+            TryToAddMove(desk, list, 1, 2);
+            TryToAddMove(desk, list, -1, 2);
+            TryToAddMove(desk, list, 2, 1);
+            TryToAddMove(desk, list, -2, 1);
+            TryToAddMove(desk, list, -2 , -1);
+            TryToAddMove(desk, list, -1, -2);
+            TryToAddMove(desk, list, 1, -2);
+            TryToAddMove(desk, list, 2, -1);
 
             return list;
         }
     }
 
-    ////////////////...
+
+    [Serializable]
+    class Bishop : Figure
+    {
+        public Bishop(Position pos, FigureSide side)
+        {
+            FigPosition = pos;
+            FigureSide = side;
+            FigureType = FigureType.Bishop;
+        }
+
+        public override List<FigMove> GetPossibleMoves(Desk desk)
+        {
+            var list = new List<FigMove>();
+
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, i, i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, i, -i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, -i, i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, -i, -i)) break;
+            }
+
+            return list;
+        }
+    }
+
+    [Serializable]
+    class Rook : Figure
+    {
+
+        public Rook(Position pos, FigureSide side)
+        {
+            FigPosition = pos;
+            FigureSide = side;
+            FigureType = FigureType.Rook;
+        }
+
+        public override List<FigMove> GetPossibleMoves(Desk desk)
+        {
+            var list = new List<FigMove>();
+
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, 0, i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, 0, -i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, i, 0)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, -i, 0)) break;
+            }
+
+            return list;
+        }
+    }
+
+    [Serializable]
+    class Queen : Figure
+    {
+        public Queen(Position pos, FigureSide side)
+        {
+            FigPosition = pos;
+            FigureSide = side;
+            FigureType = FigureType.Queen;
+        }
+
+        public override List<FigMove> GetPossibleMoves(Desk desk)
+        {
+            var list = new List<FigMove>();
+
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, 0, i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, 0, -i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, i, 0)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, -i, 0)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, i, i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, i, -i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, -i, i)) break;
+            }
+            for (var i = 1; i < 7; i++)
+            {
+                if(!TryToAddMove(desk, list, -i, -i)) break;
+            }
+
+            return list;
+        }
+    }
+
 
     [Serializable]
     class King : Figure
     {
-        King(Position pos, FigureSide side, FigureType type)
+        King(Position pos, FigureSide side)
         {
             FigPosition = pos;
             this.FigureSide = side;
-            this.FigureType = type;
+            this.FigureType = FigureType.King;
         }
 
-        public override List<FigMove> GetPossibleTurns(Desk desk)
+        public override List<FigMove> GetPossibleMoves(Desk desk)
         {
             var list = new List<FigMove>();
 
-
+            TryToAddMove(desk, list,-1,1);
+            TryToAddMove(desk, list,0,1);
+            TryToAddMove(desk, list,1,1);
+            TryToAddMove(desk, list,1,0);
+            TryToAddMove(desk, list,1,-1);
+            TryToAddMove(desk, list,0,-1);
+            TryToAddMove(desk, list,-1,-1);
+            TryToAddMove(desk, list,-1,0);
 
             return list;
         }
