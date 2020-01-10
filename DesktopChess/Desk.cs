@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DesktopChess
 {
+    [Serializable]
     class Desk
     {
-        public List<Figure> allFigures { get; private set; }
+        public List<Figure> AllFigures { get; private set; }
 
-        public Figure[,] fieldOfFigures { get; private set; }
+        public Figure[,] FieldOfFigures { get; private set; }
 
         public King WhiteKing;
 
@@ -20,14 +21,25 @@ namespace DesktopChess
 
         public Desk()
         {
-            // TODO
             // Create all figures
-            // 
+            throw new NotImplementedException();
+        }
+
+        public Desk GetCopy()
+        {
+
+            var stream = new MemoryStream();
+            var formatter = new BinaryFormatter();
+            formatter.Serialize(stream, this);
+            stream.Seek(0, SeekOrigin.Begin);
+            var s = formatter.Deserialize(stream) as Desk;
+            stream.Close();
+            return s;
         }
 
         public void ApplyMove(FigMove move)
         {
-            // TODO
+            throw new NotImplementedException();
         }
 
         public void ApplyMoves(IEnumerable<FigMove> moves)
@@ -40,12 +52,13 @@ namespace DesktopChess
 
         public IEnumerable<Figure> WhiteFigures()
         {
-            return allFigures.Where(figure => figure.FigureSide == FigureSide.White);
+            return AllFigures.Where(figure => figure.FigureSide == FigureSide.White);
         }
 
         public IEnumerable<Figure> BlackFigures()
         {
-            return allFigures.Where(figure => figure.FigureSide == FigureSide.Black);
+            return AllFigures.Where(figure => figure.FigureSide == FigureSide.Black);
         }
+
     }
 }
