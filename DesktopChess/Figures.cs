@@ -87,8 +87,12 @@ namespace DesktopChess
                         if(y > 0 && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -1))
                             list.Add(new FigMove(this, FigPosition, new Position(x, y - 1), false));
 
-                        TryToAddMove(desk, list, -1, -1);
-                        TryToAddMove(desk, list, 1, -1);
+                        if (CanAtackTo(desk, -1, -1) && !IsMoveOpensKing(desk, -1, -1) && desk.FieldOfFigures[x-1,y-1] != null)
+                            list.Add(new FigMove(this, FigPosition, new Position(x-1, y-1), true));
+                        if (CanAtackTo(desk, 1, -1) && !IsMoveOpensKing(desk, 1, -1) && desk.FieldOfFigures[x+1,y-1] != null)
+                            list.Add(new FigMove(this, FigPosition, new Position(x+1, y-1), true));
+
+                        
                 }
                     break;
                 case FigureSide.White:
@@ -99,8 +103,10 @@ namespace DesktopChess
                         if(y < 7 && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 1))
                             list.Add(new FigMove(this, FigPosition, new Position(x, y + 1), false));
 
-                        TryToAddMove(desk, list, 1, -1);
-                        TryToAddMove(desk, list, 1, 1);
+                        if (CanAtackTo(desk, 1, 1) && !IsMoveOpensKing(desk, 1, 1) && desk.FieldOfFigures[x+1,y+1] != null)
+                            list.Add(new FigMove(this, FigPosition, new Position(x+1, y+1), true));
+                        if (CanAtackTo(desk, -1, 1) && !IsMoveOpensKing(desk, -1, 1) && desk.FieldOfFigures[x-1,y+1] != null)
+                            list.Add(new FigMove(this, FigPosition, new Position(x-1, y+1), true));
                 }
                     break;
             }
@@ -265,7 +271,7 @@ namespace DesktopChess
     [Serializable]
     class King : Figure
     {
-        King(Position pos, FigureSide side)
+        public King(Position pos, FigureSide side)
         {
             FigPosition = pos;
             this.FigureSide = side;
@@ -284,6 +290,8 @@ namespace DesktopChess
             TryToAddMove(desk, list,0,-1);
             TryToAddMove(desk, list,-1,-1);
             TryToAddMove(desk, list,-1,0);
+
+            // TODO рокировка
 
             return list;
         }

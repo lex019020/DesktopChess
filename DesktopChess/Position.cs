@@ -5,23 +5,23 @@ namespace DesktopChess
 {
     class Position
     {
-        private string pos;
+        private readonly string _pos;
 
         public Position(int x, int y)
         {
-            FromIntToText(x, y, out pos);
+            FromIntToText(x, y, out _pos);
         }
 
         public Position(string pos)
         {
-            this.pos = pos;
+            this._pos = pos;
         }
 
         /// <summary>
         /// Get a string position
         /// </summary>
         /// <returns></returns>
-        public string GetPos() => pos;
+        public string GetPos() => _pos;
 
         public static void FromTextToInt(string pos, out int x, out int y)
         {
@@ -45,7 +45,7 @@ namespace DesktopChess
         {
             if (obj == null) return false;
             if (!(obj is Position pos2)) return false;
-            return pos2.pos == pos;
+            return pos2._pos == _pos;
         }
     }
 }
