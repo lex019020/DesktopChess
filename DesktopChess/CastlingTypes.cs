@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace DesktopChess
 {
-    public enum FigureSide
+    public enum CastlingTypes
     {
-        White,
-        Black
+        None,
+        WhiteToRight,
+        WhiteToLeft,
+        BlackToRight,
+        BlackToLeft
     }
 }

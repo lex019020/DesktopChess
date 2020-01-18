@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DesktopChess
 {
-    class Game
+    public class Game
     {
         private Desk desk;
         private int _movesWithoutAction;
@@ -76,7 +76,7 @@ namespace DesktopChess
                 _movesWithoutAction++;
                 desk.ApplyMove(fig.GetPossibleMoves(desk).FirstOrDefault(
                     mmove => mmove.AfterPosition.Equals(new Position(move.Item1, move.Item2))));
-                if(_movesWithoutAction == 50)
+                if (_movesWithoutAction == 50)
                     Desk_OnTie();
             }
             catch (Exception)
@@ -104,7 +104,7 @@ namespace DesktopChess
             foreach (var move in fig.GetPossibleMoves(desk))
             {
                 Position.FromTextToInt(move.AfterPosition.GetPos(), out var xMove, out var yMove);
-                list.Add(new Tuple<int, int>(xMove,yMove));
+                list.Add(new Tuple<int, int>(xMove, yMove));
             }
 
             return list;

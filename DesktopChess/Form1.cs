@@ -16,5 +16,13 @@ namespace DesktopChess
         {
             InitializeComponent();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            var defaultDesk = new Desk();
+            label1.Text = defaultDesk.ToString();
+            label2.Text = defaultDesk.WhiteKing.IsAtacked(defaultDesk).ToString();
+            var list = defaultDesk.FieldOfFigures[4, 6].GetPossibleMoves(defaultDesk);
+        }
     }
 }

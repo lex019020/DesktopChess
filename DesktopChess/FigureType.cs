@@ -1,6 +1,6 @@
 ﻿namespace DesktopChess
 {
-    enum FigureType
+    public enum FigureType
     {
         Pawn,
         Horse,

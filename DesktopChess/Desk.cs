@@ -6,14 +6,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DesktopChess
 {
-    delegate void MateDelegate(FigureSide winner);
+    public delegate void MateDelegate(FigureSide winner);
 
-    delegate void EatenHandler(Figure eatenFig);
+    public delegate void EatenHandler(Figure eatenFig);
 
-    delegate void VoidHandler();
+    public delegate void VoidHandler();
 
     [Serializable]
-    class Desk
+    public class Desk
     {
         public Figure[,] FieldOfFigures { get; private set; }
 
@@ -55,7 +55,7 @@ namespace DesktopChess
             FieldOfFigures[3,7] = new Queen(new Position(3,7), FigureSide.Black);
             FieldOfFigures[4,7] = new King(new Position(4,7), FigureSide.Black);
             for(var i = 0; i < 8; i++)
-                FieldOfFigures[i, 6] = new Pawn(new Position(i, 1), FigureSide.Black);
+                FieldOfFigures[i, 6] = new Pawn(new Position(i, 6), FigureSide.Black);
 
             WhiteKing = FieldOfFigures[4, 0] as King;
             BlackKing = FieldOfFigures[4,7] as King;
@@ -113,13 +113,26 @@ namespace DesktopChess
         {
             if(move == null)
                 return;
-            if(!AllFigures().Contains(move.Figure))
-                throw new ArgumentException("Desk doesent contain this figure");
+            if (!AllFigures().Contains(move.Figure))
+            {
+                var deskAggregate = AllFigures().Aggregate("", (current, figure) => current + figure + " ");
+                throw new ArgumentException("Desk: " + deskAggregate + " \nfig: " + move.Figure);
+            }
+            
+            Position.FromTextToInt(move.Figure.FigPosition.GetPos(), out var x, out var y);
+            Position.FromTextToInt(move.AfterPosition.GetPos(), out var newX, out var newY);
+
             if (GetFigAtPosition(move.AfterPosition) == null)
             {
+                FieldOfFigures[newX, newY] = move.Figure;
                 move.Figure.FigPosition = move.AfterPosition;
-                if(move.Figure.FigureType == FigureType.Pawn)
+                FieldOfFigures[x, y] = null;
+                if (move.Figure.FigureType == FigureType.Pawn)
+                {
                     OnFigEatenOrPaawnMove?.Invoke();
+                    (move.Figure as Pawn)?.Moved();
+                }
+
             }
             else
             {
@@ -132,10 +145,13 @@ namespace DesktopChess
                     move.Figure.FigPosition = move.AfterPosition;
                 }
                 else
-                    throw new ArgumentException("Cannot eat friendly figure");
+                    throw new ArgumentException(move.Figure + " cannot eat " + GetFigAtPosition(move.AfterPosition));
             }
 
-            // TODO превращение пешки
+
+
+            // TODO превращение пешки, castling
+
             CheckForCheckmateOrTie();
         }
 
@@ -173,7 +189,7 @@ namespace DesktopChess
             FieldOfFigures[x, y] = null;
         }
 
-        void CheckForCheckmateOrTie()
+        private void CheckForCheckmateOrTie()
         {
             if (!WhiteKing.IsAtacked(this) && !BlackKing.IsAtacked(this)) return;
             if (WhiteKing.IsAtacked(this) && BlackKing.IsAtacked(this))
