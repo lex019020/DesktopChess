@@ -6,10 +6,10 @@ namespace DesktopChess
 {
     public class Game
     {
-        private Desk desk;
+        public Desk Desk;
         private int _movesWithoutAction;
         public List<Figure> WhiteEatenFigures { get; private set; }
-        public List<Figure> BlackEanenFigures { get; private set; }
+        public List<Figure> BlackEatenFigures { get; private set; }
         public FigureSide CurrentTurn;
         public GameState CurrentState;
         public enum GameState
@@ -23,17 +23,17 @@ namespace DesktopChess
 
         public Game()
         {
-            desk = new Desk();
+            Desk = new Desk();
             CurrentTurn = FigureSide.White;
             CurrentState = GameState.Started;
             WhiteEatenFigures = new List<Figure>();
-            BlackEanenFigures = new List<Figure>();
+            BlackEatenFigures = new List<Figure>();
             _movesWithoutAction = 0;
 
-            desk.OnFigEatenOrPaawnMove += Desk_OnFigEatenOrPaawnMove;
-            desk.OnFigireEaten += Desk_OnFigireEaten;
-            desk.OnMate += Desk_OnMate;
-            desk.OnTie += Desk_OnTie;
+            Desk.OnFigEatenOrPaawnMove += Desk_OnFigEatenOrPaawnMove;
+            Desk.OnFigireEaten += Desk_OnFigireEaten;
+            Desk.OnMate += Desk_OnMate;
+            Desk.OnTie += Desk_OnTie;
         }
 
         private void Desk_OnTie()
@@ -54,7 +54,7 @@ namespace DesktopChess
                     WhiteEatenFigures.Add(eatenFig);
                     break;
                 case FigureSide.Black:
-                    BlackEanenFigures.Add(eatenFig);
+                    BlackEatenFigures.Add(eatenFig);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -66,16 +66,17 @@ namespace DesktopChess
             _movesWithoutAction = 0;
         }
 
-        public bool DoAMove(Tuple<int, int> figPosition, Tuple<int, int> move)
+        public bool DoAMove(string figPosition, string move)
         {
-            var fig = desk.FieldOfFigures[figPosition.Item1, figPosition.Item2];
+            Position.FromTextToInt(figPosition, out var x, out var y);
+            var fig = Desk.FieldOfFigures[x, y];
             if (fig == null || fig.FigureSide != CurrentTurn)
                 return false;
             try
             {
                 _movesWithoutAction++;
-                desk.ApplyMove(fig.GetPossibleMoves(desk).FirstOrDefault(
-                    mmove => mmove.AfterPosition.Equals(new Position(move.Item1, move.Item2))));
+                Desk.ApplyMove(fig.GetPossibleMoves(Desk).FirstOrDefault(
+                    mmove => mmove.AfterPosition.Equals(new Position(move))));
                 if (_movesWithoutAction == 50)
                     Desk_OnTie();
             }
@@ -88,34 +89,28 @@ namespace DesktopChess
             return true;
         }
 
-        public List<Tuple<int, int>> GetMovesForCell(int x, int y)
+        public List<string> GetMovesForCell(string cell)
         {
+            Position.FromTextToInt(cell, out var x, out var y);
             if (CurrentState != GameState.Started)
                 return null;
             if (x < 0 || x > 7 || y < 0 || y > 7)
                 return null;
 
-            var fig = desk.FieldOfFigures[x, y];
-            if (fig == null || fig.GetPossibleMoves(desk).Count == 0)
+            var fig = Desk.FieldOfFigures[x, y];
+            if (fig == null || fig.GetPossibleMoves(Desk).Count == 0)
                 return null;
 
-            var list = new List<Tuple<int, int>>();
-
-            foreach (var move in fig.GetPossibleMoves(desk))
-            {
-                Position.FromTextToInt(move.AfterPosition.GetPos(), out var xMove, out var yMove);
-                list.Add(new Tuple<int, int>(xMove, yMove));
-            }
-
-            return list;
+            return fig.GetPossibleMoves(Desk).Select(move => move.AfterPosition.GetPos()).ToList();
         }
 
-        public Tuple<FigureType, FigureSide> GetFigAt(int x, int y)
+        public Tuple<FigureType, FigureSide> GetFigAt(string pos)
         {
-            if (desk.FieldOfFigures[x, y] == null)
+            Position.FromTextToInt(pos, out var x, out var y);
+            if (Desk.FieldOfFigures[x, y] == null)
                 return null;
 
-            var fig = desk.FieldOfFigures[x, y];
+            var fig = Desk.FieldOfFigures[x, y];
             return new Tuple<FigureType, FigureSide>(fig.FigureType, fig.FigureSide);
         }
 

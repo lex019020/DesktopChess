@@ -21,7 +21,6 @@ namespace DesktopChess
 
         public King BlackKing { get; private set; }
 
-        public FigureSide CurrentTurn { get; private set; }
 
         public event MateDelegate OnMate;
 
@@ -142,7 +141,9 @@ namespace DesktopChess
                     OnFigEatenOrPaawnMove?.Invoke();
 
                     DelFigure(GetFigAtPosition(move.AfterPosition));
+                    FieldOfFigures[newX, newY] = move.Figure;
                     move.Figure.FigPosition = move.AfterPosition;
+                    FieldOfFigures[x, y] = null;
                 }
                 else
                     throw new ArgumentException(move.Figure + " cannot eat " + GetFigAtPosition(move.AfterPosition));
@@ -201,6 +202,7 @@ namespace DesktopChess
                 OnTie?.Invoke();
                 return;
             }
+            // TODO Fix It, doesent work!
 
             if (WhiteKing.IsAtacked(this))
                 if(WhiteFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
@@ -218,7 +220,7 @@ namespace DesktopChess
 
             for (var y = 7; y > -1; y--)
             {
-                for (var x = 0; x < 7; x++)
+                for (var x = 0; x < 8; x++)
                 {
                     var fig = FieldOfFigures[x, y];
                     if (fig == null)

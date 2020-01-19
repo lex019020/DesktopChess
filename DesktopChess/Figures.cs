@@ -41,10 +41,12 @@ namespace DesktopChess
             Position.FromTextToInt(FigPosition.GetPos(), out var x, out var y);
             var tmp = desk.FieldOfFigures[x + xDelta, y + yDelta];
             desk.FieldOfFigures[x + xDelta, y + yDelta] = this;
+            this.FigPosition = new Position(x + xDelta, y + yDelta);
             desk.FieldOfFigures[x, y] = null;
             var ret = FigureSide == FigureSide.White ? desk.WhiteKing.IsAtacked(desk) : desk.BlackKing.IsAtacked(desk);
             desk.FieldOfFigures[x + xDelta, y + yDelta] = tmp;
             desk.FieldOfFigures[x, y] = this;
+            this.FigPosition = new Position(x, y);
             return ret;
         }
 
@@ -60,9 +62,22 @@ namespace DesktopChess
         {
             Position.FromTextToInt(FigPosition.GetPos(), out var x, out var y);
             if (!CanAtackTo(desk, xDelta, yDelta) || IsMoveOpensKing(desk, xDelta, yDelta)) return false;
-            list.Add(new FigMove(this, FigPosition, new Position(x + xDelta, y + yDelta), true));
+            list.Add(new FigMove(this, new Position(x + xDelta, y + yDelta), true));
             return true;
 
+        }
+
+        protected bool TryToAddMove(Desk desk, List<FigMove> list, int xDelta, int yDelta, out bool willEat)
+        {
+            var ret = TryToAddMove(desk, list, xDelta, yDelta);
+            if (!ret)
+            {
+                willEat = false;
+                return false;
+            }
+            Position.FromTextToInt(FigPosition.GetPos(), out var x, out var y);
+            willEat = desk.FieldOfFigures[x + xDelta, y + yDelta] != null;
+            return true;
         }
 
         public override string ToString()
@@ -92,15 +107,15 @@ namespace DesktopChess
                 case FigureSide.Black:
                 {
                         if (!_isMoved && y > 1 && desk.FieldOfFigures[x, y - 2] == null && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -2))
-                            list.Add(new FigMove(this, FigPosition, new Position(x, y - 2), false));
+                            list.Add(new FigMove(this, new Position(x, y - 2), false));
 
                         if (y > 0 && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -1))
-                            list.Add(new FigMove(this, FigPosition, new Position(x, y - 1), false));
+                            list.Add(new FigMove(this, new Position(x, y - 1), false));
 
                         if (CanAtackTo(desk, -1, -1) && !IsMoveOpensKing(desk, -1, -1) && desk.FieldOfFigures[x - 1, y - 1] != null)
-                            list.Add(new FigMove(this, FigPosition, new Position(x - 1, y - 1), true));
+                            list.Add(new FigMove(this, new Position(x - 1, y - 1), true));
                         if (CanAtackTo(desk, 1, -1) && !IsMoveOpensKing(desk, 1, -1) && desk.FieldOfFigures[x + 1, y - 1] != null)
-                            list.Add(new FigMove(this, FigPosition, new Position(x + 1, y - 1), true));
+                            list.Add(new FigMove(this, new Position(x + 1, y - 1), true));
 
 
                 }
@@ -108,15 +123,15 @@ namespace DesktopChess
                 case FigureSide.White:
                     {
                         if (!_isMoved && y < 6 && desk.FieldOfFigures[x, y + 2] == null && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 2))
-                            list.Add(new FigMove(this, this.FigPosition, new Position(x, y + 2), false));
+                            list.Add(new FigMove(this, new Position(x, y + 2), false));
 
                         if (y < 7 && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 1))
-                            list.Add(new FigMove(this, FigPosition, new Position(x, y + 1), false));
+                            list.Add(new FigMove(this, new Position(x, y + 1), false));
 
                         if (CanAtackTo(desk, 1, 1) && !IsMoveOpensKing(desk, 1, 1) && desk.FieldOfFigures[x + 1, y + 1] != null)
-                            list.Add(new FigMove(this, FigPosition, new Position(x + 1, y + 1), true));
+                            list.Add(new FigMove(this, new Position(x + 1, y + 1), true));
                         if (CanAtackTo(desk, -1, 1) && !IsMoveOpensKing(desk, -1, 1) && desk.FieldOfFigures[x - 1, y + 1] != null)
-                            list.Add(new FigMove(this, FigPosition, new Position(x - 1, y + 1), true));
+                            list.Add(new FigMove(this, new Position(x - 1, y + 1), true));
                     }
                     break;
                 default:
@@ -176,19 +191,19 @@ namespace DesktopChess
 
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, i, i)) break;
+                if (!TryToAddMove(desk, list, i, i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, i, -i)) break;
+                if (!TryToAddMove(desk, list, i, -i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, -i, i)) break;
+                if (!TryToAddMove(desk, list, -i, i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, -i, -i)) break;
+                if (!TryToAddMove(desk, list, -i, -i, out var willEat) || willEat) break;
             }
 
             return list;
@@ -212,19 +227,19 @@ namespace DesktopChess
 
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, 0, i)) break;
+                if (!TryToAddMove(desk, list, 0, i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, 0, -i)) break;
+                if (!TryToAddMove(desk, list, 0, -i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, i, 0)) break;
+                if (!TryToAddMove(desk, list, i, 0, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, -i, 0)) break;
+                if (!TryToAddMove(desk, list, -i, 0, out var willEat) || willEat) break;
             }
 
             return list;
@@ -247,35 +262,35 @@ namespace DesktopChess
 
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, 0, i)) break;
+                if (!TryToAddMove(desk, list, 0, i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, 0, -i)) break;
+                if (!TryToAddMove(desk, list, 0, -i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, i, 0)) break;
+                if (!TryToAddMove(desk, list, i, 0, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, -i, 0)) break;
+                if (!TryToAddMove(desk, list, -i, 0, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, i, i)) break;
+                if (!TryToAddMove(desk, list, i, i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, i, -i)) break;
+                if (!TryToAddMove(desk, list, i, -i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, -i, i)) break;
+                if (!TryToAddMove(desk, list, -i, i, out var willEat) || willEat) break;
             }
             for (var i = 1; i < 7; i++)
             {
-                if (!TryToAddMove(desk, list, -i, -i)) break;
+                if (!TryToAddMove(desk, list, -i, -i, out var willEat) || willEat) break;
             }
 
             return list;
@@ -415,7 +430,6 @@ namespace DesktopChess
 
 
 
-
             // Now check for horses and pawns
             if (x < 8 - 1 && y < 8 - 2)
             {
@@ -459,7 +473,7 @@ namespace DesktopChess
                 if (fig != null && fig.FigureSide != FigureSide && fig.FigureType == FigureType.Horse)
                     return true;
             }
-            if (x < 8 - 1 && y > 0)
+            if (x < 8 - 2 && y > 0)
             {
                 var fig = desk.FieldOfFigures[x + 2, y - 1];
                 if (fig != null && fig.FigureSide != FigureSide && fig.FigureType == FigureType.Horse)

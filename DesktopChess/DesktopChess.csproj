@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Icons-Land-Metro-Raster-Sport-Chess-Pieces.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CastlingTypes.cs" />
     <Compile Include="Desk.cs" />
+    <Compile Include="FieldState.cs" />
     <Compile Include="FigMove.cs" />
     <Compile Include="Figures.cs" />
     <Compile Include="FigureSide.cs" />
@@ -59,11 +63,20 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
+    <Compile Include="NewGameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewGameDialog.Designer.cs">
+      <DependentUpon>NewGameDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewGameDialog.resx">
+      <DependentUpon>NewGameDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -73,6 +86,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
@@ -88,6 +102,44 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Chess_bdt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_blt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_kdt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_klt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_pdt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_plt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_qdt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_qlt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_rdt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_rlt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_Udt45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Chess_Ult45.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icons-Land-Metro-Raster-Sport-Chess-Pieces.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

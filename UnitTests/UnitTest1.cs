@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DesktopChess;
 
@@ -63,8 +64,8 @@ namespace UnitTests
         public void ApplyTwoPawnMoves()
         {
             var desk = new Desk();
-            desk.ApplyMove(new FigMove(desk.FieldOfFigures[4, 1], new Position(4, 1), new Position(4, 3), false));
-            desk.ApplyMove(new FigMove(desk.FieldOfFigures[4, 6], new Position(4, 6), new Position(4, 4), false));
+            desk.ApplyMove(new FigMove(desk.FieldOfFigures[4, 1], new Position(4, 3), false));
+            desk.ApplyMove(new FigMove(desk.FieldOfFigures[4, 6], new Position(4, 4), false));
             Assert.AreEqual(0, desk.FieldOfFigures[4, 3].GetPossibleMoves(desk).Count);
         }
 
@@ -118,6 +119,60 @@ namespace UnitTests
             desk.FieldOfFigures[1, 1] = new Queen(new Position(1, 1), FigureSide.White);
             Assert.AreEqual(0, desk.FieldOfFigures[6, 6].GetPossibleMoves(desk).Count);
             Assert.AreEqual(2, desk.FieldOfFigures[5, 6].GetPossibleMoves(desk).Count);
+        }
+
+        [TestMethod]
+        public void FightOfPawns()
+        {
+            var desk = createEmptyDesk();
+            desk.FieldOfFigures[3, 3] = new Pawn(new Position(3, 3), FigureSide.White, true);
+            desk.FieldOfFigures[4, 4] = new Pawn(new Position(4, 4),FigureSide.Black );
+            Assert.AreEqual(true, desk.FieldOfFigures[4, 4].IsAtacked(desk));
+            Assert.AreEqual(2, desk.FieldOfFigures[3, 3].GetPossibleMoves(desk).Count);
+            Assert.AreEqual(3, desk.FieldOfFigures[4, 4].GetPossibleMoves(desk).Count);
+        }
+
+        [TestMethod]
+        public void PawnEatsOtherPawn()
+        {
+            var desk = createEmptyDesk();
+            desk.FieldOfFigures[3, 3] = new Pawn(new Position(3, 3), FigureSide.White, true);
+            desk.FieldOfFigures[4, 4] = new Pawn(new Position(4, 4),FigureSide.Black );
+            var move = desk.FieldOfFigures[3, 3].GetPossibleMoves(desk)
+                .First(mv => Equals(mv.AfterPosition, new Position(4, 4)));
+            desk.ApplyMove(move);
+            Console.WriteLine(desk.ToString());
+        }
+
+        [TestMethod]
+        public void TestKingAtackedTime()
+        {
+            var desk = new Desk();
+            desk.WhiteKing.IsAtacked(desk);
+        }
+
+        [TestMethod]
+        public void TestQueenAtackedTime()
+        {
+            var desk = new Desk();
+            desk.FieldOfFigures[3, 0].IsAtacked(desk);
+        }
+
+        [TestMethod]
+        public void TestCheckedKing()
+        {
+            var desk = createEmptyDesk();
+            desk.FieldOfFigures[1,1] = new Queen(new Position(1, 1), FigureSide.White);
+            Assert.AreEqual(2, desk.BlackKing.GetPossibleMoves(desk).Count);
+        }
+
+        [TestMethod]
+        public void TestMate()
+        {
+            var desk = createEmptyDesk();
+            desk.FieldOfFigures[7, 0] = new Rook(new Position(7, 0), FigureSide.White);
+            desk.FieldOfFigures[6, 0] = new Rook(new Position(6, 0), FigureSide.White);
+            Assert.AreEqual(0, desk.BlackKing.GetPossibleMoves(desk).Count);
         }
     }
 }
