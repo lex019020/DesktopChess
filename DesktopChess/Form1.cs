@@ -132,7 +132,10 @@ namespace DesktopChess
         {
             for(var i = 0; i < 8; i++)
                 for(var j = 0; j < 8; j++)
+                {
                     _panels[i, j].BackColor = (i + j) % 2 == 0 ? Color.WhiteSmoke : Color.DarkGray;
+                    _panels[i, j].BorderStyle = BorderStyle.None;
+                }
             if(cell == null) return;
             var moves = _game.GetMovesForCell(cell);
             if(moves == null) return;
@@ -140,7 +143,10 @@ namespace DesktopChess
             {
                 var cellName = panel.Name.Split('_')[1];
                 if (moves.Contains(cellName))
+                {
                     panel.BackColor = _moveColor;
+                    panel.BorderStyle = BorderStyle.FixedSingle;
+                }
             }
         }
 

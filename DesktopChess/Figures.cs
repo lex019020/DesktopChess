@@ -15,6 +15,8 @@ namespace DesktopChess
 
         public FigureType FigureType { get; protected set; }
 
+        public bool IsMoved { get; protected set; }
+
         public bool IsAtacked(Desk desk)
         {
             var opFigs = this.FigureSide == FigureSide.Black ? desk.WhiteFigures() : desk.BlackFigures();
@@ -84,18 +86,22 @@ namespace DesktopChess
         {
             return FigureSide + " " + FigureType + " at " + FigPosition.GetPos();
         }
+
+        public void Moved()
+        {
+            this.IsMoved = true;
+        }
     }
 
     [Serializable]
     public class Pawn : Figure
     {
-        private bool _isMoved = false;
         public Pawn(Position pos, FigureSide side, bool isMoved = false)
         {
             FigPosition = pos;
             FigureSide = side;
             FigureType = FigureType.Pawn;
-            _isMoved = isMoved;
+            IsMoved = isMoved;
         }
 
         public override List<FigMove> GetPossibleMoves(Desk desk)
@@ -106,7 +112,7 @@ namespace DesktopChess
             {
                 case FigureSide.Black:
                 {
-                        if (!_isMoved && y > 1 && desk.FieldOfFigures[x, y - 2] == null && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -2))
+                        if (!IsMoved && y > 1 && desk.FieldOfFigures[x, y - 2] == null && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -2))
                             list.Add(new FigMove(this, new Position(x, y - 2), false));
 
                         if (y > 0 && desk.FieldOfFigures[x, y - 1] == null && !IsMoveOpensKing(desk, 0, -1))
@@ -122,7 +128,7 @@ namespace DesktopChess
                     break;
                 case FigureSide.White:
                     {
-                        if (!_isMoved && y < 6 && desk.FieldOfFigures[x, y + 2] == null && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 2))
+                        if (!IsMoved && y < 6 && desk.FieldOfFigures[x, y + 2] == null && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 2))
                             list.Add(new FigMove(this, new Position(x, y + 2), false));
 
                         if (y < 7 && desk.FieldOfFigures[x, y + 1] == null && !IsMoveOpensKing(desk, 0, 1))
@@ -141,10 +147,6 @@ namespace DesktopChess
             return list;
         }
 
-        public void Moved()
-        {
-            this._isMoved = true;
-        }
     }
 
     [Serializable]
@@ -301,11 +303,12 @@ namespace DesktopChess
     [Serializable]
     public class King : Figure
     {
-        public King(Position pos, FigureSide side)
+        public King(Position pos, FigureSide side, bool moved = false)
         {
             FigPosition = pos;
             this.FigureSide = side;
             this.FigureType = FigureType.King;
+            IsMoved = moved;
         }
 
         public override List<FigMove> GetPossibleMoves(Desk desk)
@@ -321,7 +324,28 @@ namespace DesktopChess
             TryToAddMove(desk, list, -1, -1);
             TryToAddMove(desk, list, -1, 0);
 
-            // TODO castling
+            if (!IsMoved)
+            {
+                Position.FromTextToInt(FigPosition.GetPos(), out var x, out var y);
+                if (x != 4) return list;
+                if (IsAtacked(desk)) return list;
+
+                if(desk.FieldOfFigures[7, y] is Rook rrook && !rrook.IsMoved)
+                    if (desk.FieldOfFigures[x+2,y] == null && !IsMoveOpensKing(desk, 2, 0))
+                        if (desk.FieldOfFigures[x+1,y] == null && !IsMoveOpensKing(desk, 1, 0))
+                        {
+                            list.Add(new FigMove(this, new Position(x+2,y), false, CastlingTypes.ToRight));
+                        }
+
+                if(desk.FieldOfFigures[0, y] is Rook lrook && !lrook.IsMoved)
+                    if(desk.FieldOfFigures[x-1,y] == null && !IsMoveOpensKing(desk, -1, 0))
+                        if(desk.FieldOfFigures[x-2,y] == null && !IsMoveOpensKing(desk, -2, 0))
+                            if (desk.FieldOfFigures[x - 3, y] == null && !IsMoveOpensKing(desk, -3, 0))
+                            {
+                                list.Add(new FigMove(this, new Position(x-3,y), false, CastlingTypes.ToLeft));
+                            }
+            }
+
 
             return list;
         }
@@ -483,6 +507,7 @@ namespace DesktopChess
 
             return false;
         }
+
     }
 
 

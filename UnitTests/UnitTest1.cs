@@ -174,5 +174,15 @@ namespace UnitTests
             desk.FieldOfFigures[6, 0] = new Rook(new Position(6, 0), FigureSide.White);
             Assert.AreEqual(0, desk.BlackKing.GetPossibleMoves(desk).Count);
         }
+
+        [TestMethod]
+        public void DoAMate()
+        {
+            var desk = createEmptyDesk();
+            desk.FieldOfFigures[7, 0] = new Rook(new Position(7, 0), FigureSide.White);
+            desk.FieldOfFigures[5, 0] = new Rook(new Position(5, 0), FigureSide.White);
+            desk.ApplyMove(new FigMove(desk.FieldOfFigures[5, 0], new Position("g1"), true ));
+            Assert.AreEqual(0, desk.BlackKing.GetPossibleMoves(desk).Count);
+        }
     }
 }

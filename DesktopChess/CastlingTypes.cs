@@ -9,9 +9,7 @@ namespace DesktopChess
     public enum CastlingTypes
     {
         None,
-        WhiteToRight,
-        WhiteToLeft,
-        BlackToRight,
-        BlackToLeft
+        ToRight,
+        ToLeft
     }
 }

@@ -12,6 +12,8 @@ namespace DesktopChess
 
     public delegate void VoidHandler();
 
+    public delegate FigureType PawnSwapHandler(Pawn pawn);
+
     [Serializable]
     public class Desk
     {
@@ -29,6 +31,8 @@ namespace DesktopChess
         public event VoidHandler OnFigEatenOrPaawnMove;
 
         public event VoidHandler OnTie;
+
+        public PawnSwapHandler OnPawnSwap;
 
         public Desk()
         {
@@ -129,7 +133,29 @@ namespace DesktopChess
                 if (move.Figure.FigureType == FigureType.Pawn)
                 {
                     OnFigEatenOrPaawnMove?.Invoke();
-                    (move.Figure as Pawn)?.Moved();
+                }
+                move.Figure.Moved();
+                if(move.CastlingType != CastlingTypes.None)
+                {
+                    Rook crook = null; // rook for castling
+                    // ReSharper disable once SwitchStatementMissingSomeCases
+                    switch (move.CastlingType)
+                    {
+                        case CastlingTypes.ToRight:
+                            crook = FieldOfFigures[7, y] as Rook;
+                            FieldOfFigures[5, y] = crook;
+                            if (crook != null) crook.FigPosition = new Position(5, y);
+                            FieldOfFigures[7, y] = null;
+                            break;
+                        case CastlingTypes.ToLeft:
+                            crook = FieldOfFigures[0,y] as Rook;
+                            FieldOfFigures[2, y] = crook;
+                            if (crook != null) crook.FigPosition = new Position(2, y);
+                            FieldOfFigures[0, y] = null;
+                            break;
+                    }
+
+                    crook.Moved();
                 }
 
             }
@@ -144,6 +170,7 @@ namespace DesktopChess
                     FieldOfFigures[newX, newY] = move.Figure;
                     move.Figure.FigPosition = move.AfterPosition;
                     FieldOfFigures[x, y] = null;
+                    move.Figure.Moved();
                 }
                 else
                     throw new ArgumentException(move.Figure + " cannot eat " + GetFigAtPosition(move.AfterPosition));
@@ -151,7 +178,7 @@ namespace DesktopChess
 
 
 
-            // TODO превращение пешки, castling
+            CheckForPawnSwap();
 
             CheckForCheckmateOrTie();
         }
@@ -192,26 +219,71 @@ namespace DesktopChess
 
         private void CheckForCheckmateOrTie()
         {
-            if (!WhiteKing.IsAtacked(this) && !BlackKing.IsAtacked(this)) return;
+            #region debug
+
+            var wfigs = WhiteFigures();
+            var bkmvs = BlackKing.GetPossibleMoves(this);
+            var bfigs = WhiteFigures();
+            var wkmvs = WhiteKing.GetPossibleMoves(this);
+
+            #endregion
+
             if (WhiteKing.IsAtacked(this) && BlackKing.IsAtacked(this))
                 throw new ApplicationException("What the fuck just happened?");
 
-            if (WhiteFigures().All(fig => fig.GetPossibleMoves(this).Count == 0) ||
-                BlackFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
+            if (WhiteKing.IsAtacked(this) || BlackKing.IsAtacked(this))
             {
-                OnTie?.Invoke();
-                return;
+                if (WhiteKing.IsAtacked(this))
+                    if (WhiteFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
+                        OnMate?.Invoke(FigureSide.Black);
+
+                if (BlackKing.IsAtacked(this))
+                    if (BlackFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
+                        OnMate?.Invoke(FigureSide.White);
             }
-            // TODO Fix It, doesent work!
+            else
+                if (WhiteFigures().All(fig => fig.GetPossibleMoves(this).Count == 0) ||
+                    BlackFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
+                {
+                    OnTie?.Invoke();
+                }
 
-            if (WhiteKing.IsAtacked(this))
-                if(WhiteFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
-                    OnMate?.Invoke(FigureSide.Black);
+        }
 
-            if(BlackKing.IsAtacked(this))
-                if(BlackFigures().All(fig => fig.GetPossibleMoves(this).Count == 0))
-                    OnMate?.Invoke(FigureSide.White);
+        public void CheckForPawnSwap()
+        {
+            for (var i = 0; i < 8; i++)
+            {
+                var fig = FieldOfFigures[i, 0];
+                if (fig == null || fig.FigureType != FigureType.Pawn || fig.FigureSide != FigureSide.Black)
+                {
+                    fig = FieldOfFigures[i, 7];
+                    if (fig == null || fig.FigureType != FigureType.Pawn || fig.FigureSide != FigureSide.White)
+                        continue;
+                }
 
+                var side = fig.FigureSide;
+                Position.FromTextToInt(fig.FigPosition.GetPos(), out var x, out var y);
+                var type = OnPawnSwap(fig as Pawn);
+                // ReSharper disable once SwitchStatementMissingSomeCases
+                switch (type)
+                {
+                    case FigureType.Horse:
+                        FieldOfFigures[x,y] = new Horse(fig.FigPosition, side);
+                        break;
+                    case FigureType.Bishop:
+                        FieldOfFigures[x,y] = new Bishop(fig.FigPosition, side);
+                        break;
+                    case FigureType.Rook:
+                        FieldOfFigures[x,y] = new Rook(fig.FigPosition, side);
+                        break;
+                    case FigureType.Queen:
+                        FieldOfFigures[x,y] = new Queen(fig.FigPosition, side);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
         }
 
         public override string ToString()
