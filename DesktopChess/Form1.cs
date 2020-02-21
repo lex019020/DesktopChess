@@ -21,6 +21,7 @@ namespace DesktopChess
 
         private Panel[,] _panels;
         private Game _game;
+        private TimeSpan _p1Time, _p2Time;
         private string _chosenCell;
         private FieldState _state;
         private Color _moveColor;
@@ -51,25 +52,49 @@ namespace DesktopChess
             var newGameDialog = new NewGameDialog();
             if (newGameDialog.ShowDialog(this) != DialogResult.OK) return;
 
-            _game = new Game();
-            // TODO pawns and kings only
+            _game = new Game {Desk = {OnPawnSwap = PawnSwapNotifier}};
+            _game.Desk.OnMate += MateNotifier;
+            _game.Desk.OnTie += TieNotifier;
 
-            if (newGameDialog.DelBb)
-                _game.Desk.FieldOfFigures[5, 7] = null;
-            if (newGameDialog.DelWb)
-                _game.Desk.FieldOfFigures[5, 0] = null;
-            if (newGameDialog.DelBh)
-                _game.Desk.FieldOfFigures[6, 7] = null;
-            if (newGameDialog.DelWh)
-                _game.Desk.FieldOfFigures[6, 0] = null;
-            if (newGameDialog.DelBr)
-                _game.Desk.FieldOfFigures[0, 7] = null;
-            if (newGameDialog.DelWr)
-                _game.Desk.FieldOfFigures[0, 0] = null;
-            if (newGameDialog.DelBq)
-                _game.Desk.FieldOfFigures[3, 7] = null;
-            if (newGameDialog.DelWq)
-                _game.Desk.FieldOfFigures[3, 0] = null;
+            _p1Time = _p2Time = TimeSpan.FromMinutes(newGameDialog.Time);
+
+            if(!newGameDialog.KingsAndPawnsOnly)
+            {
+                if (newGameDialog.DelBb)
+                    _game.Desk.FieldOfFigures[5, 7] = null;
+                if (newGameDialog.DelWb)
+                    _game.Desk.FieldOfFigures[5, 0] = null;
+                if (newGameDialog.DelBh)
+                    _game.Desk.FieldOfFigures[6, 7] = null;
+                if (newGameDialog.DelWh)
+                    _game.Desk.FieldOfFigures[6, 0] = null;
+                if (newGameDialog.DelBr)
+                    _game.Desk.FieldOfFigures[0, 7] = null;
+                if (newGameDialog.DelWr)
+                    _game.Desk.FieldOfFigures[0, 0] = null;
+                if (newGameDialog.DelBq)
+                    _game.Desk.FieldOfFigures[3, 7] = null;
+                if (newGameDialog.DelWq)
+                    _game.Desk.FieldOfFigures[3, 0] = null;
+            }
+            else
+            {
+                _game.Desk.FieldOfFigures[0,0] = null;
+                _game.Desk.FieldOfFigures[1,0] = null;
+                _game.Desk.FieldOfFigures[2,0] = null;
+                _game.Desk.FieldOfFigures[3,0] = null;
+                _game.Desk.FieldOfFigures[5,0] = null;
+                _game.Desk.FieldOfFigures[6,0] = null;
+                _game.Desk.FieldOfFigures[7,0] = null;
+
+                _game.Desk.FieldOfFigures[0,7] = null;
+                _game.Desk.FieldOfFigures[1,7] = null;
+                _game.Desk.FieldOfFigures[2,7] = null;
+                _game.Desk.FieldOfFigures[3,7] = null;
+                _game.Desk.FieldOfFigures[5,7] = null;
+                _game.Desk.FieldOfFigures[6,7] = null;
+                _game.Desk.FieldOfFigures[7,7] = null;
+            }
 
 
             game_panel.Visible = true;
@@ -77,6 +102,59 @@ namespace DesktopChess
             start_panel.Visible = false;
             RenewFigures();
             _state = FieldState.FigNotChosen;
+            SetTimersState();
+        }
+
+        private void ResetGame()
+        {
+            _game = null;
+            _state = FieldState.NotStarted;
+            _chosenCell = null;
+            timer1.Stop();
+            timer2.Stop();
+            game_panel.Visible = false;
+            desk_panel.Visible = false;
+            start_panel.Visible = true;
+        }
+
+        private void SetTimersState()
+        {
+            switch (_state)
+            {
+                case FieldState.NotStarted:
+                    break;
+                case FieldState.Paused:
+                    timer1.Stop();
+                    timer2.Stop();
+                    break;
+                case FieldState.FigChosen:
+                case FieldState.FigNotChosen:
+                    switch (_game.CurrentTurn)
+                    {
+                        case FigureSide.White:
+                            if(!timer1.Enabled)
+                                timer1.Start();
+                            timer2.Stop();
+                            break;
+                        case FigureSide.Black:
+                            if(!timer2.Enabled)
+                                timer2.Start();
+                            timer1.Stop();
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void RenewGamePanel()
+        {
+            label_white_time.Text = _p1Time.Minutes + ":" + _p1Time.Seconds + ":" + _p1Time.Milliseconds/100;
+            label_black_time.Text = _p2Time.Minutes + ":" + _p2Time.Seconds + ":" + _p2Time.Milliseconds/100;
+            label_whos_turn.Text = _game.CurrentTurn == FigureSide.White ? "Ход белых" : "Ход чёрных";
         }
 
         private void RenewFigures()
@@ -168,11 +246,23 @@ namespace DesktopChess
                         _game.CurrentTurn = _game.CurrentTurn == FigureSide.Black 
                             ? FigureSide.White 
                             : FigureSide.Black;
+                        SetTimersState();
                     }
 
-                    _chosenCell = null;
-                    _state = FieldState.FigNotChosen;
-                    DrawMovesForCell(null);
+                    if (_game.GetFigAt(cellName) != null && _game.GetFigAt(cellName).Item2 == _game.CurrentTurn)
+                    {
+                        _chosenCell = cellName;
+                        _state = FieldState.FigChosen;
+                        DrawMovesForCell(_chosenCell);
+                        
+                    }
+                    else
+                    {
+                        _chosenCell = null;
+                        _state = FieldState.FigNotChosen;
+                        DrawMovesForCell(null);
+                    }
+
                     break;
                 case FieldState.FigNotChosen:
                     if(_game.GetFigAt(cellName) == null || _game.GetFigAt(cellName).Item2 != _game.CurrentTurn) return;
@@ -183,6 +273,61 @@ namespace DesktopChess
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private FigureType PawnSwapNotifier(Pawn pawn)
+        {
+            RenewFigures();
+            DrawMovesForCell(null);
+            var form = new ChooseFigureForm {StartPosition = FormStartPosition.CenterParent};
+            form.ShowDialog();
+            return form.Fig;
+        }
+
+        private void MateNotifier(FigureSide side)
+        {
+            RenewFigures();
+            DrawMovesForCell(null);
+            MessageBox.Show(side == FigureSide.White? "Выиграли белые!":"Выиграли чёрные!", "Игра окончена");
+            ResetGame();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (_p1Time <= TimeSpan.FromMilliseconds(100))
+            {
+                timer1.Stop();
+                MateNotifier(FigureSide.Black);
+                return;
+            }
+
+            _p1Time -= TimeSpan.FromMilliseconds(100);
+            RenewGamePanel();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if(_p2Time <= TimeSpan.FromMilliseconds(100))
+            {
+                timer2.Stop();
+                MateNotifier(FigureSide.White);
+                return;
+            }
+            _p2Time -= TimeSpan.FromMilliseconds(100);
+            RenewGamePanel();
+        }
+
+        private void TieNotifier()
+        {
+            RenewFigures();
+            DrawMovesForCell(null);
+            MessageBox.Show("Игра закончилась ничьёй.", "Ничья");
+            ResetGame();
         }
     }
 }

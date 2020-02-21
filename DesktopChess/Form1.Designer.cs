@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.start_panel = new System.Windows.Forms.Panel();
             this.load_btn = new System.Windows.Forms.Button();
@@ -103,6 +104,8 @@
             this.cell_c8 = new System.Windows.Forms.Panel();
             this.cell_b8 = new System.Windows.Forms.Panel();
             this.cell_a8 = new System.Windows.Forms.Panel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.start_panel.SuspendLayout();
             this.game_panel.SuspendLayout();
             this.desk_panel.SuspendLayout();
@@ -172,37 +175,38 @@
             this.label1.Size = new System.Drawing.Size(51, 17);
             this.label1.TabIndex = 74;
             this.label1.Text = "Белые";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label_black_time
             // 
-            this.label_black_time.AutoSize = true;
+            this.label_black_time.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label_black_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label_black_time.Location = new System.Drawing.Point(741, 57);
+            this.label_black_time.Location = new System.Drawing.Point(637, 57);
             this.label_black_time.Name = "label_black_time";
-            this.label_black_time.Size = new System.Drawing.Size(76, 29);
+            this.label_black_time.Size = new System.Drawing.Size(180, 29);
             this.label_black_time.TabIndex = 73;
             this.label_black_time.Text = "60:00";
+            this.label_black_time.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label_white_time
             // 
-            this.label_white_time.AutoSize = true;
             this.label_white_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label_white_time.Location = new System.Drawing.Point(17, 57);
             this.label_white_time.Name = "label_white_time";
-            this.label_white_time.Size = new System.Drawing.Size(76, 29);
+            this.label_white_time.Size = new System.Drawing.Size(200, 29);
             this.label_white_time.TabIndex = 72;
             this.label_white_time.Text = "60:00";
             // 
             // label_whos_turn
             // 
             this.label_whos_turn.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.label_whos_turn.AutoSize = true;
             this.label_whos_turn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label_whos_turn.Location = new System.Drawing.Point(364, 32);
+            this.label_whos_turn.Location = new System.Drawing.Point(344, 47);
             this.label_whos_turn.Name = "label_whos_turn";
-            this.label_whos_turn.Size = new System.Drawing.Size(105, 24);
+            this.label_whos_turn.Size = new System.Drawing.Size(146, 24);
             this.label_whos_turn.TabIndex = 71;
             this.label_whos_turn.Text = "Ход белых";
+            this.label_whos_turn.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // desk_panel
             // 
@@ -917,6 +921,14 @@
             this.cell_a8.Size = new System.Drawing.Size(100, 100);
             this.cell_a8.TabIndex = 65;
             // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // timer2
+            // 
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -927,6 +939,7 @@
             this.Controls.Add(this.game_panel);
             this.Controls.Add(this.start_panel);
             this.Controls.Add(this.desk_panel);
+            this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -1021,6 +1034,8 @@
         private System.Windows.Forms.Panel cell_c8;
         private System.Windows.Forms.Panel cell_b8;
         private System.Windows.Forms.Panel cell_a8;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 

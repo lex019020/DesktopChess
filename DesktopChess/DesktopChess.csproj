@@ -50,6 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CastlingTypes.cs" />
+    <Compile Include="ChooseFigureForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChooseFigureForm.Designer.cs">
+      <DependentUpon>ChooseFigureForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Desk.cs" />
     <Compile Include="FieldState.cs" />
     <Compile Include="FigMove.cs" />
@@ -72,6 +78,9 @@
     <Compile Include="Position.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ChooseFigureForm.resx">
+      <DependentUpon>ChooseFigureForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

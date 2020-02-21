@@ -46,6 +46,7 @@
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.kAndPawns = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -59,9 +60,9 @@
             this.groupBox1.Controls.Add(this.delWqCb);
             this.groupBox1.Enabled = false;
             this.groupBox1.Location = new System.Drawing.Point(191, 15);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(155, 140);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
@@ -71,7 +72,7 @@
             // 
             this.delWbCb.AutoSize = true;
             this.delWbCb.Location = new System.Drawing.Point(9, 107);
-            this.delWbCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delWbCb.Margin = new System.Windows.Forms.Padding(4);
             this.delWbCb.Name = "delWbCb";
             this.delWbCb.Size = new System.Drawing.Size(120, 21);
             this.delWbCb.TabIndex = 3;
@@ -83,7 +84,7 @@
             // 
             this.delWhCb.AutoSize = true;
             this.delWhCb.Location = new System.Drawing.Point(9, 79);
-            this.delWhCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delWhCb.Margin = new System.Windows.Forms.Padding(4);
             this.delWhCb.Name = "delWhCb";
             this.delWhCb.Size = new System.Drawing.Size(112, 21);
             this.delWhCb.TabIndex = 2;
@@ -95,7 +96,7 @@
             // 
             this.delWrCb.AutoSize = true;
             this.delWrCb.Location = new System.Drawing.Point(9, 50);
-            this.delWrCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delWrCb.Margin = new System.Windows.Forms.Padding(4);
             this.delWrCb.Name = "delWrCb";
             this.delWrCb.Size = new System.Drawing.Size(122, 21);
             this.delWrCb.TabIndex = 1;
@@ -107,7 +108,7 @@
             // 
             this.delWqCb.AutoSize = true;
             this.delWqCb.Location = new System.Drawing.Point(9, 25);
-            this.delWqCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delWqCb.Margin = new System.Windows.Forms.Padding(4);
             this.delWqCb.Name = "delWqCb";
             this.delWqCb.Size = new System.Drawing.Size(123, 21);
             this.delWqCb.TabIndex = 0;
@@ -119,8 +120,8 @@
             // 
             this.radioButton1.AutoSize = true;
             this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(16, 36);
-            this.radioButton1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButton1.Location = new System.Drawing.Point(16, 22);
+            this.radioButton1.Margin = new System.Windows.Forms.Padding(4);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(162, 21);
             this.radioButton1.TabIndex = 1;
@@ -132,8 +133,8 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(16, 65);
-            this.radioButton2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButton2.Location = new System.Drawing.Point(17, 78);
+            this.radioButton2.Margin = new System.Windows.Forms.Padding(4);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(132, 21);
             this.radioButton2.TabIndex = 2;
@@ -149,9 +150,9 @@
             this.groupBox2.Controls.Add(this.delBqCb);
             this.groupBox2.Enabled = false;
             this.groupBox2.Location = new System.Drawing.Point(353, 15);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox2.Size = new System.Drawing.Size(155, 140);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
@@ -161,7 +162,7 @@
             // 
             this.delBbCb.AutoSize = true;
             this.delBbCb.Location = new System.Drawing.Point(9, 107);
-            this.delBbCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delBbCb.Margin = new System.Windows.Forms.Padding(4);
             this.delBbCb.Name = "delBbCb";
             this.delBbCb.Size = new System.Drawing.Size(120, 21);
             this.delBbCb.TabIndex = 3;
@@ -173,7 +174,7 @@
             // 
             this.delBhCb.AutoSize = true;
             this.delBhCb.Location = new System.Drawing.Point(9, 79);
-            this.delBhCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delBhCb.Margin = new System.Windows.Forms.Padding(4);
             this.delBhCb.Name = "delBhCb";
             this.delBhCb.Size = new System.Drawing.Size(112, 21);
             this.delBhCb.TabIndex = 2;
@@ -185,7 +186,7 @@
             // 
             this.delBrCb.AutoSize = true;
             this.delBrCb.Location = new System.Drawing.Point(9, 50);
-            this.delBrCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delBrCb.Margin = new System.Windows.Forms.Padding(4);
             this.delBrCb.Name = "delBrCb";
             this.delBrCb.Size = new System.Drawing.Size(122, 21);
             this.delBrCb.TabIndex = 1;
@@ -197,7 +198,7 @@
             // 
             this.delBqCb.AutoSize = true;
             this.delBqCb.Location = new System.Drawing.Point(9, 25);
-            this.delBqCb.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.delBqCb.Margin = new System.Windows.Forms.Padding(4);
             this.delBqCb.Name = "delBqCb";
             this.delBqCb.Size = new System.Drawing.Size(123, 21);
             this.delBqCb.TabIndex = 0;
@@ -208,7 +209,7 @@
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(373, 162);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4);
             this.textBox1.MaxLength = 5;
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(119, 22);
@@ -232,7 +233,7 @@
             this.radioButton3.AutoSize = true;
             this.radioButton3.Checked = true;
             this.radioButton3.Location = new System.Drawing.Point(20, 25);
-            this.radioButton3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButton3.Margin = new System.Windows.Forms.Padding(4);
             this.radioButton3.Name = "radioButton3";
             this.radioButton3.Size = new System.Drawing.Size(72, 21);
             this.radioButton3.TabIndex = 7;
@@ -245,7 +246,7 @@
             // 
             this.radioButton4.AutoSize = true;
             this.radioButton4.Location = new System.Drawing.Point(20, 53);
-            this.radioButton4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.radioButton4.Margin = new System.Windows.Forms.Padding(4);
             this.radioButton4.Name = "radioButton4";
             this.radioButton4.Size = new System.Drawing.Size(81, 21);
             this.radioButton4.TabIndex = 8;
@@ -256,7 +257,7 @@
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button1.Location = new System.Drawing.Point(172, 194);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(183, 47);
             this.button1.TabIndex = 9;
@@ -269,19 +270,32 @@
             this.groupBox3.Controls.Add(this.radioButton3);
             this.groupBox3.Controls.Add(this.radioButton4);
             this.groupBox3.Location = new System.Drawing.Point(17, 110);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox3.Size = new System.Drawing.Size(165, 78);
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Первый ход";
+            // 
+            // kAndPawns
+            // 
+            this.kAndPawns.AutoSize = true;
+            this.kAndPawns.Location = new System.Drawing.Point(17, 50);
+            this.kAndPawns.Name = "kAndPawns";
+            this.kAndPawns.Size = new System.Drawing.Size(136, 21);
+            this.kAndPawns.TabIndex = 11;
+            this.kAndPawns.TabStop = true;
+            this.kAndPawns.Text = "Короли и пешки";
+            this.kAndPawns.UseVisualStyleBackColor = true;
+            this.kAndPawns.CheckedChanged += new System.EventHandler(this.kAndPawns_CheckedChanged);
             // 
             // NewGameDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(527, 252);
+            this.Controls.Add(this.kAndPawns);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
@@ -291,7 +305,7 @@
             this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "NewGameDialog";
@@ -332,5 +346,6 @@
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton kAndPawns;
     }
 }

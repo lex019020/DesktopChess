@@ -22,6 +22,8 @@ namespace DesktopChess
         public bool DelWq = false, DelWr = false, DelWh = false, DelWb = false, 
                     DelBq = false, DelBr = false, DelBh = false, DelBb = false;
 
+        public bool KingsAndPawnsOnly = false;
+
         private void delWqCb_CheckedChanged(object sender, EventArgs e)
         {
             DelWq = delWqCb.Checked;
@@ -60,6 +62,11 @@ namespace DesktopChess
         private void delBbCb_CheckedChanged(object sender, EventArgs e)
         {
             DelBb = delBbCb.Checked;
+        }
+
+        private void kAndPawns_CheckedChanged(object sender, EventArgs e)
+        {
+            KingsAndPawnsOnly = kAndPawns.Checked;
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
