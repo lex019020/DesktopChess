@@ -4,11 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopChess.Properties;
+// ReSharper disable LocalizableElement
 
 namespace DesktopChess
 {
@@ -40,7 +44,7 @@ namespace DesktopChess
             };
             foreach (var panel in _panels)
             {
-                panel.Click += cell_Click;
+                panel.Click += Cell_Click;
             }
 
             _state = FieldState.NotStarted;
@@ -228,7 +232,7 @@ namespace DesktopChess
             }
         }
 
-        private void cell_Click(object sender, EventArgs e)
+        private void Cell_Click(object sender, EventArgs e)
         {
             if(!(sender is Panel cell)) return;
             var cellName = cell.Name.Split('_')[1];
@@ -329,5 +333,145 @@ namespace DesktopChess
             MessageBox.Show("Игра закончилась ничьёй.", "Ничья");
             ResetGame();
         }
+
+        private bool SaveGame()
+        {
+            var dialog = saveFileDialog1.ShowDialog();
+            if(dialog != DialogResult.OK) return false;
+            var path = saveFileDialog1.FileName;
+            if (!path.EndsWith(".chs"))
+                path += ".chs";
+
+            using (var fs = new FileStream(path, FileMode.OpenOrCreate))
+            {
+                try
+                {
+                    var save = new GameSaveClass { game = _game, bTime = _p2Time, wTime = _p1Time };
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(fs, save);
+                    MessageBox.Show("Игра сохранена.", "Готово", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Не удалось сохранить файл.\n" + e.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void LoadGame()
+        {
+            var dialog = openFileDialog1.ShowDialog();
+            if(dialog != DialogResult.OK) return;
+            var path = openFileDialog1.FileName;
+            GameSaveClass load;
+            using (var fs = new FileStream(path, FileMode.Open))
+            {
+                try
+                {
+                    var formatter = new BinaryFormatter();
+                    load = (GameSaveClass) formatter.Deserialize(fs);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Не удалось открыть файл.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            _game = load.game;
+            _p1Time = load.wTime;
+            _p2Time = load.bTime;
+            
+            _game.Desk.OnMate += MateNotifier;
+            _game.Desk.OnTie += TieNotifier;
+            _game.Desk.OnPawnSwap = PawnSwapNotifier;
+            _game.SubcribeToDeskEvents();
+
+            game_panel.Visible = true;
+            desk_panel.Visible = true;
+            start_panel.Visible = false;
+            RenewFigures();
+            _state = FieldState.FigNotChosen;
+            SetTimersState();
+        }
+
+        private void PauseGame()
+        {
+            _state = FieldState.Paused;
+            pauseButton.BackgroundImage = Resources.play_button;
+            DrawMovesForCell(null);
+            SetTimersState();
+        }
+        private void UnpauseGame()
+        {
+            _state = FieldState.FigNotChosen;
+            pauseButton.BackgroundImage = Resources.pause_button;
+            SetTimersState();
+        }
+
+        private void GoToMainMenuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PauseGame();
+            if(MessageBox.Show("Вы уверены, что хотите выйти?", "Выход", MessageBoxButtons.YesNo) 
+               != DialogResult.Yes) return;
+            ResetGame();
+        }
+
+        private void SaveGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PauseGame();
+            SaveGame();
+            UnpauseGame();
+        }
+
+        private void SaveAndCloseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PauseGame();
+            if(SaveGame())
+                this.Close();
+            else
+            {
+                UnpauseGame();
+            }
+            
+        }
+
+        private void load_btn_Click(object sender, EventArgs e)
+        {
+            LoadGame();
+        }
+
+        private void menuButtton_Click(object sender, EventArgs e)
+        {
+            PauseGame();
+            contextMenuStrip1.Show(menuButtton,0,menuButtton.Width);
+        }
+
+        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            UnpauseGame();
+        }
+
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            switch (_state)
+            {
+                case FieldState.Paused:
+                    UnpauseGame();
+                    break;
+                case FieldState.NotStarted:
+                case FieldState.FigChosen:
+                case FieldState.FigNotChosen:
+                    PauseGame();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        
     }
 }

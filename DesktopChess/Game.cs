@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace DesktopChess
 {
+    [Serializable]
     public class Game
     {
         public Desk Desk;
@@ -30,6 +31,11 @@ namespace DesktopChess
             BlackEatenFigures = new List<Figure>();
             _movesWithoutAction = 0;
 
+            SubcribeToDeskEvents();
+        }
+
+        internal void SubcribeToDeskEvents()
+        {
             Desk.OnFigEatenOrPaawnMove += Desk_OnFigEatenOrPaawnMove;
             Desk.OnFigireEaten += Desk_OnFigireEaten;
             Desk.OnMate += Desk_OnMate;

@@ -34,6 +34,8 @@
             this.load_btn = new System.Windows.Forms.Button();
             this.start_button = new System.Windows.Forms.Button();
             this.game_panel = new System.Windows.Forms.Panel();
+            this.menuButtton = new System.Windows.Forms.Button();
+            this.pauseButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label_black_time = new System.Windows.Forms.Label();
@@ -106,9 +108,16 @@
             this.cell_a8 = new System.Windows.Forms.Panel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.SaveAndCloseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SaveGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.GoToMenuToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.start_panel.SuspendLayout();
             this.game_panel.SuspendLayout();
             this.desk_panel.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // start_panel
@@ -130,6 +139,7 @@
             this.load_btn.TabIndex = 1;
             this.load_btn.Text = "Загрузить игру";
             this.load_btn.UseVisualStyleBackColor = true;
+            this.load_btn.Click += new System.EventHandler(this.load_btn_Click);
             // 
             // start_button
             // 
@@ -145,6 +155,8 @@
             // 
             // game_panel
             // 
+            this.game_panel.Controls.Add(this.menuButtton);
+            this.game_panel.Controls.Add(this.pauseButton);
             this.game_panel.Controls.Add(this.label2);
             this.game_panel.Controls.Add(this.label1);
             this.game_panel.Controls.Add(this.label_black_time);
@@ -157,6 +169,28 @@
             this.game_panel.Size = new System.Drawing.Size(835, 119);
             this.game_panel.TabIndex = 66;
             this.game_panel.Visible = false;
+            // 
+            // menuButtton
+            // 
+            this.menuButtton.BackgroundImage = global::DesktopChess.Properties.Resources.menu_button;
+            this.menuButtton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.menuButtton.Location = new System.Drawing.Point(420, 9);
+            this.menuButtton.Name = "menuButtton";
+            this.menuButtton.Size = new System.Drawing.Size(50, 50);
+            this.menuButtton.TabIndex = 77;
+            this.menuButtton.UseVisualStyleBackColor = true;
+            this.menuButtton.Click += new System.EventHandler(this.menuButtton_Click);
+            // 
+            // pauseButton
+            // 
+            this.pauseButton.BackgroundImage = global::DesktopChess.Properties.Resources.pause_button;
+            this.pauseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pauseButton.Location = new System.Drawing.Point(364, 9);
+            this.pauseButton.Name = "pauseButton";
+            this.pauseButton.Size = new System.Drawing.Size(50, 50);
+            this.pauseButton.TabIndex = 76;
+            this.pauseButton.UseVisualStyleBackColor = true;
+            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
             // 
             // label2
             // 
@@ -201,7 +235,7 @@
             // 
             this.label_whos_turn.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label_whos_turn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label_whos_turn.Location = new System.Drawing.Point(344, 47);
+            this.label_whos_turn.Location = new System.Drawing.Point(344, 76);
             this.label_whos_turn.Name = "label_whos_turn";
             this.label_whos_turn.Size = new System.Drawing.Size(146, 24);
             this.label_whos_turn.TabIndex = 71;
@@ -929,6 +963,50 @@
             // 
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "chs";
+            this.saveFileDialog1.FileName = "save1";
+            this.saveFileDialog1.Filter = "Файл сохранений|*.chs";
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.DefaultExt = "chs";
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Файл сохранения|*.chs";
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SaveAndCloseToolStripMenuItem,
+            this.SaveGameToolStripMenuItem,
+            this.GoToMenuToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(213, 104);
+            this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
+            // 
+            // SaveAndCloseToolStripMenuItem
+            // 
+            this.SaveAndCloseToolStripMenuItem.Name = "SaveAndCloseToolStripMenuItem";
+            this.SaveAndCloseToolStripMenuItem.Size = new System.Drawing.Size(212, 24);
+            this.SaveAndCloseToolStripMenuItem.Text = "Сохранить и выйти";
+            this.SaveAndCloseToolStripMenuItem.Click += new System.EventHandler(this.SaveAndCloseToolStripMenuItem_Click);
+            // 
+            // SaveGameToolStripMenuItem
+            // 
+            this.SaveGameToolStripMenuItem.Name = "SaveGameToolStripMenuItem";
+            this.SaveGameToolStripMenuItem.Size = new System.Drawing.Size(212, 24);
+            this.SaveGameToolStripMenuItem.Text = "Сохранить игру";
+            this.SaveGameToolStripMenuItem.Click += new System.EventHandler(this.SaveGameToolStripMenuItem_Click);
+            // 
+            // GoToMenuToolStripMenuItem
+            // 
+            this.GoToMenuToolStripMenuItem.Name = "GoToMenuToolStripMenuItem";
+            this.GoToMenuToolStripMenuItem.Size = new System.Drawing.Size(212, 24);
+            this.GoToMenuToolStripMenuItem.Text = "Выйти в меню";
+            this.GoToMenuToolStripMenuItem.Click += new System.EventHandler(this.GoToMainMenuToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
@@ -955,6 +1033,7 @@
             this.game_panel.ResumeLayout(false);
             this.game_panel.PerformLayout();
             this.desk_panel.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1036,6 +1115,14 @@
         private System.Windows.Forms.Panel cell_a8;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button pauseButton;
+        private System.Windows.Forms.Button menuButtton;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem SaveGameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem GoToMenuToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SaveAndCloseToolStripMenuItem;
     }
 }
 

@@ -22,16 +22,20 @@ namespace DesktopChess
         public King WhiteKing { get; private set; }
 
         public King BlackKing { get; private set; }
-
-
+        
+        [field:NonSerialized]
         public event MateDelegate OnMate;
-
+        
+        [field:NonSerialized]
         public event EatenHandler OnFigireEaten;
-
+        
+        [field:NonSerialized]
         public event VoidHandler OnFigEatenOrPaawnMove;
-
+        
+        [field:NonSerialized]
         public event VoidHandler OnTie;
 
+        [field:NonSerialized]
         public PawnSwapHandler OnPawnSwap;
 
         public Desk()
@@ -155,7 +159,7 @@ namespace DesktopChess
                             break;
                     }
 
-                    crook.Moved();
+                    crook?.Moved();
                 }
 
             }
@@ -219,14 +223,6 @@ namespace DesktopChess
 
         private void CheckForCheckmateOrTie()
         {
-            #region debug
-
-            var wfigs = WhiteFigures();
-            var bkmvs = BlackKing.GetPossibleMoves(this);
-            var bfigs = WhiteFigures();
-            var wkmvs = WhiteKing.GetPossibleMoves(this);
-
-            #endregion
 
             if (WhiteKing.IsAtacked(this) && BlackKing.IsAtacked(this))
                 throw new ApplicationException("What the fuck just happened?");
